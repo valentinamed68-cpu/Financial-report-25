@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчётность 2025 · тыс. руб.</title>
+    <!-- Chart.js для диаграмм -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .slide {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            padding: 40px 48px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1a2b3c;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #1e3a5f;
+            border-left: 6px solid #2b6c9e;
+            padding-left: 20px;
+            margin: 30px 0 20px;
+        }
+
+        h3 {
+            font-weight: 500;
+            color: #2c3e50;
+            margin: 20px 0 10px;
+            font-size: 1.3rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: #f8faff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,40,80,0.04);
+        }
+
+        .badge {
+            display: inline-block;
+            background: #d4e2f0;
+            color: #1e3a5f;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+            margin: 15px 0;
+        }
+
+        th {
+            text-align: left;
+            color: #5e6f7e;
+            font-weight: 400;
+            border-bottom: 1px solid #d0ddee;
+            padding: 12px 8px;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        td:last-child, th:last-child {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: #1a2b3c;
+        }
+
+        .highlight {
+            background-color: #fff4e0;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 25px 0 15px;
+            border-left: 8px solid #f4a261;
+        }
+
+        .decision-block {
+            background: #eef6ff;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 30px 0 10px;
+            border: 2px dashed #2b6c9e;
+        }
+
+        .decision-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #004080;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .decision-title::before {
+            content: "🔹";
+            font-size: 1.6rem;
+        }
+
+        .btn-decision {
+            background: #2b6c9e;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: default;
+            box-shadow: 0 8px 16px rgba(0,60,120,0.2);
+            display: inline-block;
+            margin-top: 16px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2b6c9e;
+            color: #2b6c9e;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 260px;
+            margin: 20px 0;
+        }
+
+        .footer-note {
+            color: #7a8a9a;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 18px;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #eaf0f8;
+            margin: 30px 0;
+        }
+
+        .two-cols {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1 1 300px;
+        }
+
+        .small-note {
+            background: #f2f6fc;
+            border-radius: 12px;
+            padding: 16px;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 1300px; width: 100%;">
+        <!-- титульный слайд -->
+        <div class="slide">
+            <h1>📊 Финансовая отчётность 2025</h1>
+            <p style="font-size: 1.2rem; color: #2b4b6f;">тыс. рублей · данные ДДС, ОПУ, баланс</p>
+            <div style="display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap;">
+                <span class="badge">💰 ДДС — движение денег</span>
+                <span class="badge">📈 ОПУ — прибыли/убытки</span>
+                <span class="badge">⚖️ Баланс — активы и долги</span>
+            </div>
+        </div>
+
+        <!-- СЛАЙД 1: ДДС – структура поступлений и списаний -->
+        <div class="slide">
+            <h2>🚰 Отчёт о движении денег (ДДС)</h2>
+            <p style="color: #346792; margin-bottom: 25px;">Поступления и платежи за 2025 год · тыс. рублей</p>
+
+            <!-- краткий итог ДДС -->
+            <div class="grid-2">
+                <div class="card">
+                    <span class="badge">📌 входящий остаток</span>
+                    <div style="font-size: 2rem; font-weight: 600;">7 107</div>
+                    <div style="color: #4f6b84;">на 1 января 2025</div>
+                </div>
+                <div class="card">
+                    <span class="badge">📌 исходящий остаток</span>
+                    <div style="font-size: 2rem; font-weight: 600;">5 950</div>
+                    <div style="color: #4f6b84;">на 31 декабря 2025</div>
+                </div>
+            </div>
+
+            <!-- основные потоки -->
+            <div class="grid-2" style="margin-top: 10px;">
+                <div>
+                    <h3>📥 Поступления всего</h3>
+                    <div style="font-size: 2.2rem; font-weight: 600; color: #1b7b4a;">127 279</div>
+                    <table style="margin-top: 10px;">
+                        <tr><th>Выручка (касса)</th><td class="amount">127 269</td></tr>
+                        <tr><th>Уставный капитал (декабрь)</th><td class="amount">10</td></tr>
+                    </table>
+                </div>
+                <div>
+                    <h3>📤 Списания всего</h3>
+                    <div style="font-size: 2.2rem; font-weight: 600; color: #b13e3e;">128 435</div>
+                    <table style="margin-top: 10px;">
+                        <tr><th>Подрядчики и зарплаты</th><td class="amount">51 623</td></tr>
+                        <tr><th>Дивиденды</th><td class="amount">37 737</td></tr>
+                        <tr><th>Налоги</th><td class="amount">13 512</td></tr>
+                        <tr><th>Маркетинг</th><td class="amount">8 741</td></tr>
+                        <tr><th>Прочие операционные</th><td class="amount">13 472</td></tr>
+                        <tr><th>ЗП директора (CEO)</th><td class="amount">3 350</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- две диаграммы -->
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="chart-container">
+                    <canvas id="chartIncome"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartExpense"></canvas>
+                </div>
+            </div>
+
+            <!-- акцент на дивиденды -->
+            <div class="highlight">
+                <p style="font-size: 1.3rem; font-weight: 600; margin-bottom: 8px;">💸 Дивиденды — 37,7 млн руб.</p>
+                <p>Это <strong>29,7%</strong> от всех поступлений (выручки). Почти треть каждого рубля уходит собственникам. Денежный поток сократился на 1,15 млн руб. за год.</p>
+            </div>
+
+            <!-- блок решения -->
+            <div class="decision-block">
+                <div class="decision-title">Обсудить с собственниками</div>
+                <ul style="margin-left: 20px; line-height: 1.6; font-size: 1.05rem;">
+                    <li>Высокая доля дивидендов (30%) при падении остатка денег — риск кассовых разрывов.</li>
+                    <li>Предложение: зафиксировать дивиденды не выше 20% от поступлений, остальное реинвестировать.</li>
+                </ul>
+                <div class="btn-decision">🔔 ПРИНЯТЬ РЕШЕНИЕ</div>
+            </div>
+        </div>
+
+        <!-- СЛАЙД 2: ОПУ – прибыль и рентабельность -->
+        <div class="slide">
+            <h2>📋 Отчёт о прибыли и убытках (ОПУ)</h2>
+            <p>Метод начисления · тыс. руб.</p>
+
+            <div style="display: flex; gap: 30px; flex-wrap: wrap; margin: 20px 0;">
+                <div style="min-width: 200px;">
+                    <span class="badge">Выручка (начисл.)</span>
+                    <div style="font-size: 2.5rem;">131 298</div>
+                </div>
+                <div style="min-width: 200px;">
+                    <span class="badge">Валовая прибыль</span>
+                    <div style="font-size: 2.5rem;">92 075</div>
+                    <div style="color: #386581;">маржинальность 70,1%</div>
+                </div>
+                <div style="min-width: 200px;">
+                    <span class="badge">Чистая прибыль</span>
+                    <div style="font-size: 2.5rem; color: #2a7f4b;">21 849</div>
+                    <div style="color: #386581;">рентабельность 16,6%</div>
+                </div>
+            </div>
+
+            <!-- краткая таблица постоянных и переменных -->
+            <table>
+                <tr><th>Переменные расходы</th><td class="amount">39 223</td></tr>
+                <tr><th>Постоянные расходы</th><td class="amount">55 148</td></tr>
+                <tr><th>Налоги (в т.ч. УСН, НДФЛ, европ.)</th><td class="amount">15 079</td></tr>
+            </table>
+
+            <div class="small-note">
+                ⚖️ Обратите внимание: чистая прибыль (21,8 млн) почти в 1,7 раза меньше выплаченных дивидендов (37,7 млн).  
+                Дивиденды частично финансируются за счёт прошлых периодов и роста кредиторской задолженности.
+            </div>
+
+            <!-- блок решения -->
+            <div class="decision-block" style="margin-top: 25px;">
+                <div class="decision-title">Контроль прибыльности</div>
+                <p>Несмотря на высокую маржу, после вычета всех расходов чистая прибыль составляет лишь 16,6% от выручки. Рекомендуется пересмотреть постоянные расходы (маркетинг, подрядчики) для увеличения чистой прибыли.</p>
+                <div class="btn-decision">📉 ОПТИМИЗИРОВАТЬ РАСХОДЫ</div>
+            </div>
+        </div>
+
+        <!-- СЛАЙД 3: Баланс – активы, пассивы, капитал -->
+        <div class="slide">
+            <h2>⚖️ Баланс (выборочно)</h2>
+            <p>На начало 2025 и на начало 2026 (тыс. руб.)</p>
+
+            <div class="two-cols">
+                <div class="col">
+                    <h3>01.01.2025</h3>
+                    <table>
+                        <tr><th>Активы</th><td class="amount">7 271</td></tr>
+                        <tr><th>  Денежные средства</th><td class="amount">7 107</td></tr>
+                        <tr><th>  Авансы поставщикам</th><td class="amount">165</td></tr>
+                        <tr><th>Капитал</th><td class="amount" style="color: #b13e3e;">-22 259</td></tr>
+                        <tr><th>Обязательства</th><td class="amount">29 530</td></tr>
+                        <tr><th>  в т.ч. подрядчики</th><td class="amount">3 562</td></tr>
+                    </table>
+                </div>
+                <div class="col">
+                    <h3>01.01.2026</h3>
+                    <table>
+                        <tr><th>Активы</th><td class="amount">5 969</td></tr>
+                        <tr><th>  Денежные средства</th><td class="amount">5 950</td></tr>
+                        <tr><th>  Авансы поставщикам</th><td class="amount">19</td></tr>
+                        <tr><th>Капитал</th><td class="amount" style="color: #b13e3e;">-43 096</td></tr>
+                        <tr><th>Обязательства</th><td class="amount">49 065</td></tr>
+                        <tr><th>  в т.ч. подрядчики</th><td class="amount">15 057</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- важные изменения -->
+            <div style="background: #f0f5fb; border-radius: 20px; padding: 20px; margin-top: 20px;">
+                <p style="font-weight: 600; color: #004d80;">🚨 Ключевые тренды баланса:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Отрицательный капитал <strong>увеличился вдвое</strong> (с -22,3 млн до -43,1 млн) — накопленные убытки превышают взносы.</li>
+                    <li>Долг перед подрядчиками <strong>вырос в 4 раза</strong> — с 3,5 млн до 15 млн. Это сигнал о возможных задержках платежей.</li>
+                    <li>Активы снизились на 18% из-за оттока денег.</li>
+                </ul>
+            </div>
+
+            <div class="decision-block">
+                <div class="decision-title">Срочные меры</div>
+                <p>Рост долгов подрядчикам и отрицательный капитал требуют переговоров с кредиторами и докапитализации (взнос учредителей либо привлечение инвестиций).</p>
+                <div class="btn-decision">📌 ПЛАН ДЕЙСТВИЙ ПО КАПИТАЛУ</div>
+            </div>
+        </div>
+
+        <!-- СЛАЙД 4: Сводные выводы -->
+        <div class="slide">
+            <h2>🔎 Главные итоги 2025</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <div style="flex: 1; min-width: 250px; background: #fbfdff; padding: 24px; border-radius: 28px;">
+                    <span class="badge">💧 Денежный поток</span>
+                    <p style="font-size: 1.8rem;">-1 156</p>
+                    <p>остаток уменьшился на эту сумму</p>
+                </div>
+                <div style="flex: 1; min-width: 250px; background: #fbfdff; padding: 24px; border-radius: 28px;">
+                    <span class="badge">💸 Дивиденды</span>
+                    <p style="font-size: 1.8rem;">37 737</p>
+                    <p>29,7% от поступлений</p>
+                </div>
+                <div style="flex: 1; min-width: 250px; background: #fbfdff; padding: 24px; border-radius: 28px;">
+                    <span class="badge">🏭 Долг подрядчикам</span>
+                    <p style="font-size: 1.8rem;">15 057</p>
+                    <p>рост +323% за год</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3>Ключевые вопросы к правлению</h3>
+            <ul style="font-size: 1.1rem; margin-left: 24px; line-height: 1.8;">
+                <li>Почему дивиденды почти вдвое превысили чистую прибыль? (источник — прошлые периоды и новые долги)</li>
+                <li>Как снизить кредиторскую задолженность перед подрядчиками?</li>
+                <li>Требуется ли увеличение уставного капитала для покрытия убытков?</li>
+            </ul>
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap; margin: 30px 0 10px;">
+                <span class="btn-outline">🔹 утвердить дивидендную политику</span>
+                <span class="btn-outline">🔹 план реструктуризации долгов</span>
+                <span class="btn-outline">🔹 бюджет на 2026</span>
+            </div>
+        </div>
+
+        <!-- подвал с расшифровкой -->
+        <div class="slide" style="background: #f2f7ff;">
+            <p style="font-size: 1rem; color: #1b3f60;">Данные округлены до тысяч рублей. Расчёты выполнены на основе файлов: Баланс 2025.xlsx, ДДС 2025.xlsx, ОПУ 2025.xlsx. Вопросы: finance@example.com</p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // диаграмма поступлений
+            const ctx1 = document.getElementById('chartIncome').getContext('2d');
+            new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Выручка (касса)', 'Уставный капитал'],
+                    datasets: [{
+                        data: [127269, 10],
+                        backgroundColor: ['#2a9d8f', '#e9c46a'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: true, text: 'Структура поступлений (тыс. руб.)' }
+                    }
+                }
+            });
+
+            // диаграмма списаний (основные категории)
+            const ctx2 = document.getElementById('chartExpense').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Подрядчики', 'Дивиденды', 'Налоги', 'Маркетинг', 'Прочие опер.', 'ЗП CEO'],
+                    datasets: [{
+                        data: [51623, 37737, 13512, 8741, 13472, 3350],
+                        backgroundColor: ['#e76f51', '#f4a261', '#e9c46a', '#7b9e89', '#87b9d0', '#b5838d'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: true, text: 'Структура списаний (тыс. руб.)' }
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
